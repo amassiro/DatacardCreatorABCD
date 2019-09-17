@@ -13,6 +13,14 @@ Create datacard:
     mkDatacards.py
 
     
+How to run:
+
+    python mkDatacards.py  --inputHistoFile abcd_backgrounds.root   \
+                           --dataHistoName  ABCD_270_3.6   \
+                           --sigHistoName  ABCD_270_3.6
+                           
+    
+    
 See instructions:
 
     https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit/wiki/settinguptheanalysis
