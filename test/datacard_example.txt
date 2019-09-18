@@ -1,0 +1,20 @@
+imax 4  number of channels
+jmax 0  number of processes -1
+kmax *  number of nuisance parameters (sources of systematical uncertainties)
+-------
+bin                   B      C       D        A   
+observation           50    100      500      10
+-------                                         
+bin                   B      C       D        A   
+process               bkg    bkg     bkg      bkg 
+process               1      1       1         1   
+rate                  1      1       1         1   
+-------                                         
+
+
+alpha rateParam A bkg (@0*@1/@2) beta,gamma,delta
+beta  rateParam B bkg 50
+gamma rateParam C bkg 100
+delta rateParam D bkg 500
+
+

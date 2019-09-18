@@ -10,13 +10,10 @@ import optparse
 
 
 # _____________________________________________________________________________
-def getHisto(fileName, histoName):
+def getHisto(fileIn, histoName):
      
-     fileIn = ROOT.TFile.Open(fileName)
      histo = fileIn.Get(histoName)
-     
      print " histo in function = " , histo
-     
      return histo
 
 
@@ -52,21 +49,40 @@ if __name__ == '__main__':
     print " dataHistoName  = ", opt.dataHistoName
     print " sigHistoName   = ", opt.sigHistoName
     
-    print "\n\n\n"
+    print "\n\n"
     
+    fileIn = ROOT.TFile.Open(opt.inputHistoFile)
+
     ROOT.TH1.SetDefaultSumw2(True)
 
-    histo_data = getHisto(opt.inputHistoFile, opt.dataHistoName )
-    histo_sig  = getHisto(opt.inputHistoFile, opt.sigHistoName )
+    histo_data = getHisto(fileIn, opt.dataHistoName )
+    histo_sig  = getHisto(fileIn, opt.sigHistoName )
     
-    print "\n\n\n"
+    print "\n\n"
     
-    #print " histo_data = " , histo_data
+    print " histo_data = " , histo_data
+    print " histo_sig  = " , histo_sig
     
-    #nbinsX = histo_data.GetNbinsX()
-    #nbinsY = histo_data.GetNbinsY()
+    nbinsX = histo_data.GetNbinsX()
+    nbinsY = histo_data.GetNbinsY()
+    print "\n\n"
     
+    print " nbinsX = " , nbinsX
+    print " nbinsY = " , nbinsY
+
     
-    print "\n\n\n"
+    #
+    # Write datacard: 
+    #
     
+    outputDirDatacard = "test"
+   
+    cardPath = outputDirDatacard + "/datacard" + "_mytest_" + ".txt"
+    print " Writing to " + cardPath 
+ 
+    card = open( cardPath ,"w")
+
+
+
+    print "\n\n"
     
