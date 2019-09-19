@@ -21,6 +21,13 @@ How to run:
                            
     
     
+    python mkDatacards.py  --inputHistoFile abcd_plots.root   \
+                           --dataHistoName  ABCD_240_4.3_Backgrounds   \
+                           --sigHistoNameTemplate  ABCD_240_4.3_Wino
+     
+     
+     
+    
 See instructions:
 
     https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit/wiki/settinguptheanalysis
@@ -30,5 +37,27 @@ See instructions:
 Where:
 
     /home/amassiro/Cern/Code/CMG/DisappearingTracks/DatacardCreatorABCD
+
     
+Test the datacard:
+
+    See http://cms-analysis.github.io/HiggsAnalysis-CombinedLimit/
+    
+    Where: /afs/cern.ch/work/a/amassiro/Latinos/Framework/Combine/CMSSW_10_2_13/src/
+    
+    If only one signal sample:
+    combine -d datacard_mytest.txt   -M AsymptoticLimits
+
+    Otherwise:
+    text2workspace.py -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel  --PO verbose \
+         --PO 'map=.*/*Wino*:to_be_frozen[1,0,10]' \
+         --PO 'map=.*/*Wino_m800_ct20:r[1,0,10]' \
+         datacard_mytest.txt -o datacard_mytest.txt.root
+
+    combine -d datacard_mytest.txt.root   -M AsymptoticLimits \
+      --setParameters to_be_frozen=0  \
+      --freezeParameters to_be_frozen \
+      --redefineSignalPOIs r
+      
+      
     

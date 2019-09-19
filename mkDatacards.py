@@ -17,6 +17,30 @@ def getHisto(fileIn, histoName):
      return histo
 
 
+def getHistos(fileIn, histoNameTemplate):
+     
+     histos = {}
+     
+     keys = fileIn.GetListOfKeys()
+     
+     for key in keys:
+       print " key = ", key
+       obj = key.ReadObj()
+       if (obj.IsA().GetName() != "TProfile"
+           and
+           obj.InheritsFrom("TH2")
+           and 
+           obj.InheritsFrom("TH1")
+           ) :
+         if histoNameTemplate in obj.GetName():
+           print " found : ", obj.GetName() 
+           histos[obj.GetName()] = obj
+     
+     return histos
+         
+
+
+
 # _____________________________________________________________________________
 if __name__ == '__main__':
     sys.argv = argv
@@ -34,9 +58,10 @@ if __name__ == '__main__':
     usage = 'usage: %prog [options]'
     parser = optparse.OptionParser(usage)
 
-    parser.add_option('--inputHistoFile'   , dest='inputHistoFile'   , help='Name of the root file with the data histogram'           , default=None)
-    parser.add_option('--dataHistoName'    , dest='dataHistoName'    , help='Name of the TH2F with data'                              , default=None)
-    parser.add_option('--sigHistoName'     , dest='sigHistoName'     , help='Name of the TH2F with signal'                            , default=None)
+    parser.add_option('--inputHistoFile'           , dest='inputHistoFile'           , help='Name of the root file with the data histogram'                        , default=None)
+    parser.add_option('--dataHistoName'            , dest='dataHistoName'            , help='Name of the TH2F with data'                                           , default=None)
+    parser.add_option('--sigHistoName'             , dest='sigHistoName'             , help='Name of the TH2F with signal'                                         , default=None)
+    parser.add_option('--sigHistoNameTemplate'     , dest='sigHistoNameTemplate'     , help='Name of the TH2F with signal template. the code will use all of them' , default=None)
 
 
 
@@ -45,9 +70,10 @@ if __name__ == '__main__':
     ROOT.gROOT.SetBatch()
 
 
-    print " inputHistoFile = ", opt.inputHistoFile
-    print " dataHistoName  = ", opt.dataHistoName
-    print " sigHistoName   = ", opt.sigHistoName
+    print " inputHistoFile         = ", opt.inputHistoFile
+    print " dataHistoName          = ", opt.dataHistoName
+    print " sigHistoName           = ", opt.sigHistoName
+    print " sigHistoNameTemplate   = ", opt.sigHistoNameTemplate
     
     print "\n\n"
     
@@ -56,12 +82,21 @@ if __name__ == '__main__':
     ROOT.TH1.SetDefaultSumw2(True)
 
     histo_data = getHisto(fileIn, opt.dataHistoName )
-    histo_sig  = getHisto(fileIn, opt.sigHistoName )
+   
+    if ( opt.sigHistoName != None ) :       
+      histo_sig  = getHisto(fileIn, opt.sigHistoName )
+      histos_sig[histo_sig.GetName()] = histo_sig
+    else :
+      print " Use as signal: ", opt.sigHistoNameTemplate
+      histos_sig  = getHistos(fileIn, opt.sigHistoNameTemplate )
+      
+      
     
     print "\n\n"
     
     print " histo_data = " , histo_data
-    print " histo_sig  = " , histo_sig
+    print " histos_sig size = " , len (histos_sig)
+    print " histos_sig = " , histos_sig
     
     nbinsX = histo_data.GetNbinsX()
     nbinsY = histo_data.GetNbinsY()
@@ -72,13 +107,15 @@ if __name__ == '__main__':
 
     
     total_num_tags = nbinsX*nbinsY
-    tag_names = ["tag_"+str(i) for i in range(total_num_tags)]
+    tag_names = ["tag_"+str(itag) for itag in range(total_num_tags)]
     
     num_bkg = 1
-    bkg_names = ["bkg_"+str(i) for i in range(num_bkg)]
+    bkg_names = ["bkg_"+str(ibkg) for ibkg in range(num_bkg)]
    
-    num_sig = 1
-    sig_names = ["sig_"+str(i) for i in range(num_sig)]
+    num_sig = len(histos_sig)
+    print " num_sig = ", num_sig
+    sig_names = [ histos_sig.values()[isig].GetName() for isig in range(num_sig)]
+    #sig_names = ["sig_"+str(i) for i in range(num_sig)]
     
     
     
@@ -94,13 +131,13 @@ if __name__ == '__main__':
     print "\n\n"
     print " Writing to " + cardPath 
 
-    columndef = 10
+    columndef = 15
  
     card = open( cardPath ,"w")
     
     card.write('## Shape input card\n')
 
-    card.write('imax 1 number of channels\n')
+    card.write('imax %d number of channels\n' % total_num_tags)
     card.write('jmax * number of background\n')
     card.write('kmax * number of nuisance parameters\n') 
     
@@ -153,7 +190,8 @@ if __name__ == '__main__':
     for ibinsX in range(nbinsX) :
       for ibinsY in range(nbinsY) :
         for isig in range(num_sig):
-          card.write(((' %.3f ' % histo_sig.GetBinContent(ibinsX+1, ibinsY+1))).ljust(columndef))
+          #card.write(((' %.3f ' % histo_sig.GetBinContent(ibinsX+1, ibinsY+1))).ljust(columndef))
+          card.write(((' %.3f ' % histos_sig.values()[isig].GetBinContent(ibinsX+1, ibinsY+1))).ljust(columndef))
         for ibkg in range(num_bkg):
           #
           # Use data as nominal values for background
@@ -215,11 +253,13 @@ if __name__ == '__main__':
 #
 #
 
+    card.write('\n')
+
     for ibinsY in range(nbinsY) :
       for ibinsX in range(nbinsX) :
         if (ibinsY != (nbinsY-1) and ibinsX != (nbinsX-1) ) :
           for bkg_name in bkg_names:
-            card.write('c_%.0f_%.0f rateParam   %s      %s   (@0*@1/@2) c_%.0f_%.0f,c_%.0f_%.0f,c_%.0f_%.0f \n ' % (ibinsX, ibinsY,
+            card.write('c_%.0f_%.0f rateParam   %s      %s   (@0*@1/@2) c_%.0f_%.0f,c_%.0f_%.0f,c_%.0f_%.0f \n' % (ibinsX, ibinsY,
                                                                                                                     ("tag_"+str(ibinsX*nbinsY + ibinsY)),
                                                                                                                     bkg_name,
                                                                                                                     ibinsX+1, ibinsY, 
@@ -232,7 +272,7 @@ if __name__ == '__main__':
       for ibinsX in range(nbinsX) :
         if (ibinsY == (nbinsY-1) or ibinsX == (nbinsX-1) ) :
           for bkg_name in bkg_names:
-            card.write('c_%.0f_%.0f rateParam   %s      %s   %.2f \n ' % (ibinsX, ibinsY, 
+            card.write('c_%.0f_%.0f rateParam   %s      %s   %.2f \n' % (ibinsX, ibinsY, 
                                                                           ("tag_"+str(ibinsX*nbinsY + ibinsY)),
                                                                           bkg_name,
                                                                           1.0
@@ -269,6 +309,7 @@ if __name__ == '__main__':
 
 
 
+    card.write('\n\n\n')
 
     card.close()
 
