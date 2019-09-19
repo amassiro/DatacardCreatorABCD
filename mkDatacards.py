@@ -7,6 +7,8 @@ argv = sys.argv
 sys.argv = argv[:1]
 import ROOT
 import optparse
+import collections
+import os.path
 
 
 # _____________________________________________________________________________
@@ -62,8 +64,7 @@ if __name__ == '__main__':
     parser.add_option('--dataHistoName'            , dest='dataHistoName'            , help='Name of the TH2F with data'                                           , default=None)
     parser.add_option('--sigHistoName'             , dest='sigHistoName'             , help='Name of the TH2F with signal'                                         , default=None)
     parser.add_option('--sigHistoNameTemplate'     , dest='sigHistoNameTemplate'     , help='Name of the TH2F with signal template. the code will use all of them' , default=None)
-
-
+    parser.add_option('--nuisancesFile'            , dest='nuisancesFile'            , help='File where nuisances structure is defined'                            , default=None)
 
     (opt, args) = parser.parse_args()
 
@@ -74,6 +75,9 @@ if __name__ == '__main__':
     print " dataHistoName          = ", opt.dataHistoName
     print " sigHistoName           = ", opt.sigHistoName
     print " sigHistoNameTemplate   = ", opt.sigHistoNameTemplate
+    print " nuisancesFile          = ", opt.nuisancesFile
+    
+    
     
     print "\n\n"
     
@@ -117,9 +121,17 @@ if __name__ == '__main__':
     sig_names = [ histos_sig.values()[isig].GetName() for isig in range(num_sig)]
     #sig_names = ["sig_"+str(i) for i in range(num_sig)]
     
-    
-    
     print " tag_names = ", tag_names
+
+
+    # Load the nuisances
+    nuisances = collections.OrderedDict()
+    if opt.nuisancesFile != None :
+      if os.path.exists(opt.nuisancesFile) :
+        handle = open(opt.nuisancesFile,'r')
+        exec(handle)
+        handle.close()
+
     
     #
     # Write datacard: 
@@ -132,6 +144,7 @@ if __name__ == '__main__':
     print " Writing to " + cardPath 
 
     columndef = 15
+    firstcolumndef = 30
  
     card = open( cardPath ,"w")
     
@@ -143,20 +156,20 @@ if __name__ == '__main__':
     
     card.write('-'*100+'\n')
     #card.write('bin         %s' % tagNameToAppearInDatacard+'\n')
-    card.write('bin          ')
+    card.write(('bin          ').ljust(firstcolumndef))
     for tag_name in tag_names :
       card.write((' %s ' % tag_name).ljust(columndef))      
     card.write('\n')
 
     #card.write('observation %.0f\n' % yieldsData['data'])
-    card.write('observation    ')
+    card.write(('observation    ').ljust(firstcolumndef))
     for ibinsX in range(nbinsX) :
       for ibinsY in range(nbinsY) :
         card.write((' %.0f ' % histo_data.GetBinContent(ibinsX+1, ibinsY+1)).ljust(columndef))
     card.write('\n')
 
     card.write('-'*100+'\n')
-    card.write('bin       ')
+    card.write(('bin       ').ljust(firstcolumndef))
     for ibinsX in range(nbinsX) :
       for ibinsY in range(nbinsY) :
         for sig_name in sig_names:
@@ -165,7 +178,7 @@ if __name__ == '__main__':
           card.write((' %s' % ("tag_"+str(ibinsX*nbinsY + ibinsY)) ).ljust(columndef))      
     card.write('\n')
 
-    card.write('process   ')
+    card.write(('process   ').ljust(firstcolumndef))
     for ibinsX in range(nbinsX) :
       for ibinsY in range(nbinsY) :
         for sig_name in sig_names:
@@ -174,7 +187,7 @@ if __name__ == '__main__':
           card.write((' %s' % bkg_name).ljust(columndef))      
     card.write('\n')
 
-    card.write('process   ')
+    card.write(('process   ').ljust(firstcolumndef))
     for ibinsX in range(nbinsX) :
       for ibinsY in range(nbinsY) :
         for isig in range(num_sig):
@@ -186,7 +199,7 @@ if __name__ == '__main__':
     card.write('-'*100+'\n')
 
 
-    card.write('rate      ')
+    card.write(('rate      ').ljust(firstcolumndef))
     for ibinsX in range(nbinsX) :
       for ibinsY in range(nbinsY) :
         for isig in range(num_sig):
@@ -227,11 +240,11 @@ if __name__ == '__main__':
 
 #
 #
-#       ^      ^
-#       | \    |
-#       |  \   |
-#       |   \  |
-#       |    \ |
+#       ^      ^      ^      ^      ^
+#       | \    | \    | \    | \    |
+#       |  \   |  \   |  \   |  \   |
+#       |   \  |   \  |   \  |   \  |
+#       |    \ |    \ |    \ |    \ |
 #
 #
 #      For a fixed "x" move along "y", then move right on "x"     
@@ -283,31 +296,27 @@ if __name__ == '__main__':
                                                                           #
 
 
+    card.write('\n\n\n')
 
+    card.write('-'*100+'\n')
 
-
-
-
-    #for ibinsY in range(nbinsY) :
-      #if (ibinsY != 0) :
-        #for bkg_name in bkg_names:
-          #card.write('alpha_%.0f rateParam A_%.0f %s (@0*@1/@2) beta_%.0f,gamma_%.0f,delta_%.0f \n ' % (ibinsY, ibinsY, bkg_name, ibinsY, ibinsY, ibinsY) )
-
-    #for ibinsY in range(nbinsY) :
-      #if (ibinsY != 0) :
-        #for bkg_name in bkg_names:
-          #card.write('alpha_%.0f rateParam A %s (@0*@1/@2) beta_%.0f,gamma_%.0f,delta_%.0f ', ibinsY, bkg_name, ibinsY, ibinsY, ibinsY)
-
-
-        #card.write('alpha_%.0f rateParam A %s (@0*@1/@2) beta,gamma,delta ', bkg_name)
+    #
+    # Write standard nuisances
+    #
+    for nuisanceName, nuisance in nuisances.iteritems():
+      card.write((nuisance['name'] + "  " + nuisance['type']).ljust(firstcolumndef))
+      if "Signal" in nuisance['samples'] :   
+        for ibinsX in range(nbinsX) :
+           for ibinsY in range(nbinsY) :
+             for isig in range(num_sig):
+               card.write((' %s ' % nuisance['samples']['Signal'] ).ljust(columndef))
+             for ibkg in range(num_bkg):
+               card.write((' - ' ).ljust(columndef))     
+        card.write('\n')
+             
         
         
         
-    #for tag_name in tag_names :
-
-
-
-
 
     card.write('\n\n\n')
 

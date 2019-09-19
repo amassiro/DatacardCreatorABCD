@@ -26,7 +26,16 @@ How to run:
                            --sigHistoNameTemplate  ABCD_240_4.3_Wino
      
      
-     
+    python mkDatacards.py  --inputHistoFile abcd_plots_2.root   \
+                           --dataHistoName  ABCD_220_3.0_Backgrounds   \
+                           --sigHistoNameTemplate  ABCD_220_3.0_Wino
+
+                           
+    python mkDatacards.py  --inputHistoFile abcd_plots_2.root   \
+                           --dataHistoName  ABCD_220_3.0_Backgrounds   \
+                           --sigHistoNameTemplate  ABCD_220_3.0_Wino   \
+                           --nuisancesFile   test/nuisances.py
+                           
     
 See instructions:
 
