@@ -90,7 +90,7 @@ if __name__ == '__main__':
     
     outputDirDatacard = "test"
    
-    cardPath = outputDirDatacard + "/datacard" + "_mytest_" + ".txt"
+    cardPath = outputDirDatacard + "/datacard" + "_mytest" + ".txt"
     print "\n\n"
     print " Writing to " + cardPath 
 
@@ -180,10 +180,10 @@ if __name__ == '__main__':
     #
     
 #    
-#alpha rateParam A bkg (@0*@1/@2) beta,gamma,delta
-#beta  rateParam B bkg 50
-#gamma rateParam C bkg 100
-#delta rateParam D bkg 500
+#   alpha rateParam A bkg (@0*@1/@2) beta,gamma,delta
+#   beta  rateParam B bkg 50
+#   gamma rateParam C bkg 100
+#   delta rateParam D bkg 500
 #
 
 
@@ -216,9 +216,42 @@ if __name__ == '__main__':
 #
 
     for ibinsY in range(nbinsY) :
-      if (ibinsY != 0) :
-        for bkg_name in bkg_names:
-          card.write('alpha_%.0f rateParam A_%.0f %s (@0*@1/@2) beta_%.0f,gamma_%.0f,delta_%.0f \n ' % (ibinsY, ibinsY, bkg_name, ibinsY, ibinsY, ibinsY) )
+      for ibinsX in range(nbinsX) :
+        if (ibinsY != (nbinsY-1) and ibinsX != (nbinsX-1) ) :
+          for bkg_name in bkg_names:
+            card.write('c_%.0f_%.0f rateParam   %s      %s   (@0*@1/@2) c_%.0f_%.0f,c_%.0f_%.0f,c_%.0f_%.0f \n ' % (ibinsX, ibinsY,
+                                                                                                                    ("tag_"+str(ibinsX*nbinsY + ibinsY)),
+                                                                                                                    bkg_name,
+                                                                                                                    ibinsX+1, ibinsY, 
+                                                                                                                    ibinsX  , ibinsY+1,
+                                                                                                                    ibinsX+1, ibinsY+1 
+                                                                                                                    ) )
+
+
+    for ibinsY in range(nbinsY) :
+      for ibinsX in range(nbinsX) :
+        if (ibinsY == (nbinsY-1) or ibinsX == (nbinsX-1) ) :
+          for bkg_name in bkg_names:
+            card.write('c_%.0f_%.0f rateParam   %s      %s   %.2f \n ' % (ibinsX, ibinsY, 
+                                                                          ("tag_"+str(ibinsX*nbinsY + ibinsY)),
+                                                                          bkg_name,
+                                                                          1.0
+                                                                          ) )
+                                                                          #histo_data.GetBinContent(ibinsX+1, ibinsY+1)) )
+                                                                          #
+                                                                          # Either you put 1 here or in the "rate" line. Otherwise the default value will not be reasonable
+                                                                          #
+
+
+
+
+
+
+
+    #for ibinsY in range(nbinsY) :
+      #if (ibinsY != 0) :
+        #for bkg_name in bkg_names:
+          #card.write('alpha_%.0f rateParam A_%.0f %s (@0*@1/@2) beta_%.0f,gamma_%.0f,delta_%.0f \n ' % (ibinsY, ibinsY, bkg_name, ibinsY, ibinsY, ibinsY) )
 
     #for ibinsY in range(nbinsY) :
       #if (ibinsY != 0) :
