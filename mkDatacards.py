@@ -304,8 +304,8 @@ if __name__ == '__main__':
     # Write standard nuisances
     #
     for nuisanceName, nuisance in nuisances.iteritems():
-      card.write((nuisance['name'] + "  " + nuisance['type']).ljust(firstcolumndef))
       if "Signal" in nuisance['samples'] :   
+        card.write((nuisance['name'] + "  " + nuisance['type']).ljust(firstcolumndef))
         for ibinsX in range(nbinsX) :
            for ibinsY in range(nbinsY) :
              for isig in range(num_sig):
@@ -314,10 +314,26 @@ if __name__ == '__main__':
                card.write((' - ' ).ljust(columndef))     
         card.write('\n')
              
-        
-        
-        
-
+    card.write('\n')
+    for nuisanceName, nuisance in nuisances.iteritems():
+      if "Signal" not in nuisance['samples'] :   
+        card.write((nuisance['name'] + "  " + nuisance['type']).ljust(firstcolumndef))
+        for ibinsX in range(nbinsX) :
+           for ibinsY in range(nbinsY) :
+             for isig in range(num_sig):
+               card.write((' - ' ).ljust(columndef))
+             for ibkg in range(num_bkg):      
+               if "bkg_"+str(ibkg)  in nuisance['samples'] :
+                 temp_tag = ("tag_"+str(ibinsX*nbinsY + ibinsY))
+                 if temp_tag in nuisance['samples']["bkg_"+str(ibkg)] :
+                   card.write((' %s ' % nuisance['samples']["bkg_"+str(ibkg)][temp_tag] ).ljust(columndef))
+                 else:
+                   card.write((' - ' ).ljust(columndef))     
+               else :
+                 card.write((' - ' ).ljust(columndef))     
+               
+        card.write('\n')
+       
     card.write('\n\n\n')
 
     card.close()
