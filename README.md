@@ -3,11 +3,6 @@
 Generic datacard creator for ABCD
 
 
-Create dummy input histogram:
-
-    makeDummyHisto.py
-
-
 Create datacard:
 
     mkDatacards.py
