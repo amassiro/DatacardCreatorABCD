@@ -64,4 +64,17 @@ Test the datacard:
       --redefineSignalPOIs r
       
       
-    
+
+      
+    text2workspace.py -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel  --PO verbose \
+         --PO 'map=.*/*Wino*:to_be_frozen[1,0,10]' \
+         --PO 'map=.*/*Wino_m800_ct20:r[1,0,10]' \
+         datacard_mytest.txt -o datacard_mytest.m800_ct20.root
+
+    combine -d datacard_mytest.m800_ct20.root   -M AsymptoticLimits \
+      --setParameters to_be_frozen=0  \
+      --freezeParameters to_be_frozen \
+      --redefineSignalPOIs r
+      
+      
+      
