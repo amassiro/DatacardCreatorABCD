@@ -31,7 +31,14 @@ How to run:
                            --sigHistoNameTemplate  ABCD_220_3.0_Wino   \
                            --nuisancesFile   test/nuisances.py
                            
-    
+
+    python mkDatacards.py  --inputHistoFile abcd_plots_3x3_4layers.root   \
+                           --dataHistoName  W+jets_background   \
+                           --sigHistoNameTemplate  Wino   \
+                           --nuisancesFile   test/nuisances.py
+
+                           
+                           
 See instructions:
 
     https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit/wiki/settinguptheanalysis

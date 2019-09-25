@@ -64,6 +64,7 @@ if __name__ == '__main__':
     parser.add_option('--dataHistoName'            , dest='dataHistoName'            , help='Name of the TH2F with data'                                           , default=None)
     parser.add_option('--sigHistoName'             , dest='sigHistoName'             , help='Name of the TH2F with signal'                                         , default=None)
     parser.add_option('--sigHistoNameTemplate'     , dest='sigHistoNameTemplate'     , help='Name of the TH2F with signal template. the code will use all of them' , default=None)
+    parser.add_option('--bkgHistoName'             , dest='bkgHistoName'             , help='Name of the TH2F with background, MC'                                 , default=None)
     parser.add_option('--nuisancesFile'            , dest='nuisancesFile'            , help='File where nuisances structure is defined'                            , default=None)
 
     (opt, args) = parser.parse_args()
@@ -75,6 +76,7 @@ if __name__ == '__main__':
     print " dataHistoName          = ", opt.dataHistoName
     print " sigHistoName           = ", opt.sigHistoName
     print " sigHistoNameTemplate   = ", opt.sigHistoNameTemplate
+    print " bkgHistoName           = ", opt.bkgHistoName
     print " nuisancesFile          = ", opt.nuisancesFile
     
     
@@ -94,7 +96,10 @@ if __name__ == '__main__':
       print " Use as signal: ", opt.sigHistoNameTemplate
       histos_sig  = getHistos(fileIn, opt.sigHistoNameTemplate )
       
-      
+    if ( opt.bkgHistoName != None ) :       
+      histo_bkg = getHisto(fileIn, opt.bkgHistoName )
+    else :
+      histo_bkg = getHisto(fileIn, opt.dataHistoName )
     
     print "\n\n"
     
@@ -207,10 +212,13 @@ if __name__ == '__main__':
           card.write(((' %.3f ' % histos_sig.values()[isig].GetBinContent(ibinsX+1, ibinsY+1))).ljust(columndef))
         for ibkg in range(num_bkg):
           #
-          # Use data as nominal values for background
+          # Use data as nominal values for background (if the specific background sample is not provided)
           # This should have 0 effect on the result, since MC is going to be data-driven, but will help in the asimov (maybe?), if alpha, beta, ... are not used in the asimov ...
           #
-          card.write(((' %.0f ' % histo_data.GetBinContent(ibinsX+1, ibinsY+1))).ljust(columndef))     
+          if histo_bkg.GetBinContent(ibinsX+1, ibinsY+1) > 0 :
+            card.write(((' %.0f ' % histo_bkg.GetBinContent(ibinsX+1, ibinsY+1))).ljust(columndef))               
+          else :
+            card.write(((' %.0f ' % histo_data.GetBinContent(ibinsX+1, ibinsY+1))).ljust(columndef))     
     card.write('\n')
 
     card.write('-'*100+'\n')
