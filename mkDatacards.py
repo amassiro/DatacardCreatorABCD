@@ -216,9 +216,9 @@ if __name__ == '__main__':
           # This should have 0 effect on the result, since MC is going to be data-driven, but will help in the asimov (maybe?), if alpha, beta, ... are not used in the asimov ...
           #
           if histo_bkg.GetBinContent(ibinsX+1, ibinsY+1) > 0 :
-            card.write(((' %.0f ' % histo_bkg.GetBinContent(ibinsX+1, ibinsY+1))).ljust(columndef))               
+            card.write(((' %.3f ' % histo_bkg.GetBinContent(ibinsX+1, ibinsY+1))).ljust(columndef))               
           else :
-            card.write(((' %.0f ' % histo_data.GetBinContent(ibinsX+1, ibinsY+1))).ljust(columndef))     
+            card.write(((' %.3f ' % histo_data.GetBinContent(ibinsX+1, ibinsY+1))).ljust(columndef))     
     card.write('\n')
 
     card.write('-'*100+'\n')
