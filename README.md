@@ -37,6 +37,15 @@ How to run:
                            --sigHistoNameTemplate  Wino   \
                            --nuisancesFile   test/nuisances.py
 
+    python mkDatacards.py  --inputHistoFile abcd_plots_3x3_4layers.root   \
+                           --dataHistoName  data_histo   \
+                           --sigHistoNameTemplate  Wino   \
+                           --bkgHistoName   W+jets_background  \
+                           --nuisancesFile   test/nuisances.py
+                           
+                           
+                           
+                           
                            
                            
 See instructions:
