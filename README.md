@@ -44,7 +44,13 @@ How to run:
                            --nuisancesFile   test/nuisances.py
                            
                            
-                           
+Python3
+
+    python3 mkDatacards.py --inputHistoFile abcd_plots_3x3_4layers.root   \
+                           --dataHistoName  W+jets_background   \
+                           --sigHistoNameTemplate  Wino   \
+                           --nuisancesFile   test/nuisances.py
+
                            
                            
                            

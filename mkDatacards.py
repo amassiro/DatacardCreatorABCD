@@ -15,7 +15,7 @@ import os.path
 def getHisto(fileIn, histoName):
      
      histo = fileIn.Get(histoName)
-     print " histo in function = " , histo
+     print (" histo in function = " , histo)
      return histo
 
 
@@ -26,7 +26,7 @@ def getHistos(fileIn, histoNameTemplate):
      keys = fileIn.GetListOfKeys()
      
      for key in keys:
-       print " key = ", key
+       print (" key = ", key)
        obj = key.ReadObj()
        if (obj.IsA().GetName() != "TProfile"
            and
@@ -35,7 +35,7 @@ def getHistos(fileIn, histoNameTemplate):
            obj.InheritsFrom("TH1")
            ) :
          if histoNameTemplate in obj.GetName():
-           print " found : ", obj.GetName() 
+           print (" found : ", obj.GetName() )
            histos[obj.GetName()] = obj
      
      return histos
@@ -47,7 +47,7 @@ def getHistos(fileIn, histoNameTemplate):
 if __name__ == '__main__':
     sys.argv = argv
     
-    print '''
+    print ('''
 --------------------------------------------------------------------------------------------------
   __ \          |                                 |       \  |         |                
   |   |   _` |  __|   _` |   __|   _` |   __|  _` |      |\/ |   _` |  |  /   _ \   __| 
@@ -55,7 +55,7 @@ if __name__ == '__main__':
  ____/  \__,_| \__| \__,_| \___| \__,_| _|   \__,_|     _|  _| \__,_| _|\_\ \___| _|    
                                                                                 
 --------------------------------------------------------------------------------------------------
-'''    
+''')    
 
     usage = 'usage: %prog [options]'
     parser = optparse.OptionParser(usage)
@@ -72,16 +72,16 @@ if __name__ == '__main__':
     ROOT.gROOT.SetBatch()
 
 
-    print " inputHistoFile         = ", opt.inputHistoFile
-    print " dataHistoName          = ", opt.dataHistoName
-    print " sigHistoName           = ", opt.sigHistoName
-    print " sigHistoNameTemplate   = ", opt.sigHistoNameTemplate
-    print " bkgHistoName           = ", opt.bkgHistoName
-    print " nuisancesFile          = ", opt.nuisancesFile
+    print (" inputHistoFile         = ", opt.inputHistoFile         )
+    print (" dataHistoName          = ", opt.dataHistoName          )
+    print (" sigHistoName           = ", opt.sigHistoName           )
+    print (" sigHistoNameTemplate   = ", opt.sigHistoNameTemplate   )
+    print (" bkgHistoName           = ", opt.bkgHistoName           )
+    print (" nuisancesFile          = ", opt.nuisancesFile          )
     
     
     
-    print "\n\n"
+    print ("\n\n")
     
     fileIn = ROOT.TFile.Open(opt.inputHistoFile)
 
@@ -93,7 +93,7 @@ if __name__ == '__main__':
       histo_sig  = getHisto(fileIn, opt.sigHistoName )
       histos_sig[histo_sig.GetName()] = histo_sig
     else :
-      print " Use as signal: ", opt.sigHistoNameTemplate
+      print (" Use as signal: ", opt.sigHistoNameTemplate)
       histos_sig  = getHistos(fileIn, opt.sigHistoNameTemplate )
       
     if ( opt.bkgHistoName != None ) :       
@@ -101,18 +101,18 @@ if __name__ == '__main__':
     else :
       histo_bkg = getHisto(fileIn, opt.dataHistoName )
     
-    print "\n\n"
+    print ("\n\n")
     
-    print " histo_data = " , histo_data
-    print " histos_sig size = " , len (histos_sig)
-    print " histos_sig = " , histos_sig
+    print (" histo_data = " , histo_data            )
+    print (" histos_sig size = " , len (histos_sig) )
+    print (" histos_sig = " , histos_sig            )
     
     nbinsX = histo_data.GetNbinsX()
     nbinsY = histo_data.GetNbinsY()
-    print "\n\n"
+    print ("\n\n")
     
-    print " nbinsX = " , nbinsX
-    print " nbinsY = " , nbinsY
+    print (" nbinsX = " , nbinsX )
+    print (" nbinsY = " , nbinsY )
 
     
     total_num_tags = nbinsX*nbinsY
@@ -122,11 +122,11 @@ if __name__ == '__main__':
     bkg_names = ["bkg_"+str(ibkg) for ibkg in range(num_bkg)]
    
     num_sig = len(histos_sig)
-    print " num_sig = ", num_sig
+    print (" num_sig = ", num_sig    )
     sig_names = [ histos_sig.values()[isig].GetName() for isig in range(num_sig)]
     #sig_names = ["sig_"+str(i) for i in range(num_sig)]
     
-    print " tag_names = ", tag_names
+    print (" tag_names = ", tag_names )
 
 
     # Load the nuisances
@@ -145,8 +145,8 @@ if __name__ == '__main__':
     outputDirDatacard = "test"
    
     cardPath = outputDirDatacard + "/datacard" + "_mytest" + ".txt"
-    print "\n\n"
-    print " Writing to " + cardPath 
+    print ("\n\n"                       )
+    print (" Writing to " + cardPath    )
 
     columndef = 15
     firstcolumndef = 30
@@ -348,5 +348,5 @@ if __name__ == '__main__':
 
 
 
-    print "\n\n"
+    print ("\n\n")
     
