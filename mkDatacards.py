@@ -123,7 +123,7 @@ if __name__ == '__main__':
    
     num_sig = len(histos_sig)
     print (" num_sig = ", num_sig    )
-    sig_names = [ histos_sig.values()[isig].GetName() for isig in range(num_sig)]
+    sig_names = [ list(histos_sig.values())[isig].GetName() for isig in range(num_sig)]
     #sig_names = ["sig_"+str(i) for i in range(num_sig)]
     
     print (" tag_names = ", tag_names )
@@ -209,7 +209,7 @@ if __name__ == '__main__':
       for ibinsY in range(nbinsY) :
         for isig in range(num_sig):
           #card.write(((' %.3f ' % histo_sig.GetBinContent(ibinsX+1, ibinsY+1))).ljust(columndef))
-          card.write(((' %.3f ' % histos_sig.values()[isig].GetBinContent(ibinsX+1, ibinsY+1))).ljust(columndef))
+          card.write(((' %.3f ' % list(histos_sig.values())[isig].GetBinContent(ibinsX+1, ibinsY+1))).ljust(columndef))
         for ibkg in range(num_bkg):
           #
           # Use data as nominal values for background (if the specific background sample is not provided)
