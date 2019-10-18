@@ -311,7 +311,7 @@ if __name__ == '__main__':
     #
     # Write standard nuisances
     #
-    for nuisanceName, nuisance in nuisances.iteritems():
+    for nuisanceName, nuisance in nuisances.items():
       if "Signal" in nuisance['samples'] :   
         card.write((nuisance['name'] + "  " + nuisance['type']).ljust(firstcolumndef))
         for ibinsX in range(nbinsX) :
@@ -323,7 +323,7 @@ if __name__ == '__main__':
         card.write('\n')
              
     card.write('\n')
-    for nuisanceName, nuisance in nuisances.iteritems():
+    for nuisanceName, nuisance in nuisances.items():
       if "Signal" not in nuisance['samples'] :   
         card.write((nuisance['name'] + "  " + nuisance['type']).ljust(firstcolumndef))
         for ibinsX in range(nbinsX) :
