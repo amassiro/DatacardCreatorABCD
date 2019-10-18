@@ -134,7 +134,7 @@ if __name__ == '__main__':
     if opt.nuisancesFile != None :
       if os.path.exists(opt.nuisancesFile) :
         handle = open(opt.nuisancesFile,'r')
-        exec(handle)
+        exec(handle.read())
         handle.close()
 
     
