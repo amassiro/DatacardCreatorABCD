@@ -10,6 +10,8 @@ import optparse
 import collections
 import os.path
 
+import math
+
 
 # _____________________________________________________________________________
 def getHisto(fileIn, histoName):
@@ -170,7 +172,12 @@ if __name__ == '__main__':
     card.write(('observation    ').ljust(firstcolumndef))
     for ibinsX in range(nbinsX) :
       for ibinsY in range(nbinsY) :
-        card.write((' %.0f ' % histo_data.GetBinContent(ibinsX+1, ibinsY+1)).ljust(columndef))
+        #card.write((' %.0f ' % histo_data.GetBinContent(ibinsX+1, ibinsY+1)).ljust(columndef))
+        if histo_data.GetBinContent(ibinsX+1, ibinsY+1) < 1 :
+          card.write((' %.0f ' % math.ceil(histo_data.GetBinContent(ibinsX+1, ibinsY+1))).ljust(columndef))
+        else :
+          card.write((' %.0f ' % histo_data.GetBinContent(ibinsX+1, ibinsY+1)).ljust(columndef))
+          
     card.write('\n')
 
     card.write('-'*100+'\n')
