@@ -37,7 +37,7 @@ How to run:
                            --sigHistoNameTemplate  Wino   \
                            --nuisancesFile   test/nuisances.py
 
-    python mkDatacards.py  --inputHistoFile abcd_plots_3x3_4-layers_tagSim_noPU_1000_10.root   \
+    python mkDatacards.py  --inputHistoFile abcd_plots_3x3_3-layers_LH_noTag_650_10.root   \
                            --dataHistoName  background   \
                            --sigHistoNameTemplate  Wino   \
                            --bkgHistoName   background  \

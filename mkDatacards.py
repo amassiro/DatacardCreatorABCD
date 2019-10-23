@@ -383,13 +383,13 @@ if __name__ == '__main__':
 
             print (" A, B, C, D = ", A, ", ", B, ", ", C, ", ", D)
 
-            if A == 0: 
-              A = 1
+            #if A == 0: 
+              #A = 1
               
             #
             # including "A" must be >0 !
             #
-            non_closure = (A-B) / A
+            non_closure = (A-B_times_C_divided_D) / A
 
             #
             # this threshold should be put proportional to the statistical uncertainty ... missing ...
