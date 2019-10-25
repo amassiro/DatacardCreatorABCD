@@ -288,132 +288,138 @@ if __name__ == '__main__':
 #
 #
 
-    card.write('\n')
-
-    for ibinsY in range(nbinsY) :
-      for ibinsX in range(nbinsX) :
-        if (ibinsY != (nbinsY-1) and ibinsX != (nbinsX-1) ) :
-          for bkg_name in bkg_names:
-            card.write('c_%.0f_%.0f rateParam   %s      %s   (@0*@1/@2) c_%.0f_%.0f,c_%.0f_%.0f,c_%.0f_%.0f \n' % (ibinsX, ibinsY,
-                                                                                                                    ("tag_"+str(ibinsX*nbinsY + ibinsY)),
-                                                                                                                    bkg_name,
-                                                                                                                    ibinsX+1, ibinsY, 
-                                                                                                                    ibinsX  , ibinsY+1,
-                                                                                                                    ibinsX+1, ibinsY+1 
-                                                                                                                    ) )
-
-
-    for ibinsY in range(nbinsY) :
-      for ibinsX in range(nbinsX) :
-        if (ibinsY == (nbinsY-1) or ibinsX == (nbinsX-1) ) :
-          for bkg_name in bkg_names:
-            card.write('c_%.0f_%.0f rateParam   %s      %s   %.2f \n' % (ibinsX, ibinsY, 
-                                                                          ("tag_"+str(ibinsX*nbinsY + ibinsY)),
-                                                                          bkg_name,
-                                                                          1.0
-                                                                          ) )
-                                                                          #histo_data.GetBinContent(ibinsX+1, ibinsY+1)) )
-                                                                          #
-                                                                          # Either you put 1 here or in the "rate" line. Otherwise the default value will not be reasonable
-                                                                          #
-
-
-    card.write('\n\n\n')
-
-    card.write('-'*100+'\n')
-
     #
-    # Write standard nuisances
+    # Only if at least 4 bins!
     #
-    for nuisanceName, nuisance in nuisances.items():
-      if "Signal" in nuisance['samples'] :   
-        card.write((nuisance['name'] + "  " + nuisance['type']).ljust(firstcolumndef))
+    
+    if nbinsY*nbinsX>=4 :
+
+      card.write('\n')
+  
+      for ibinsY in range(nbinsY) :
         for ibinsX in range(nbinsX) :
-           for ibinsY in range(nbinsY) :
-             for isig in range(num_sig):
-               card.write((' %s ' % nuisance['samples']['Signal'] ).ljust(columndef))
-             for ibkg in range(num_bkg):
-               card.write((' - ' ).ljust(columndef))     
-        card.write('\n')
-             
-    card.write('\n')
-    for nuisanceName, nuisance in nuisances.items():
-      if "Signal" not in nuisance['samples'] :   
-        card.write((nuisance['name'] + "  " + nuisance['type']).ljust(firstcolumndef))
+          if (ibinsY != (nbinsY-1) and ibinsX != (nbinsX-1) ) :
+            for bkg_name in bkg_names:
+              card.write('c_%.0f_%.0f rateParam   %s      %s   (@0*@1/@2) c_%.0f_%.0f,c_%.0f_%.0f,c_%.0f_%.0f \n' % (ibinsX, ibinsY,
+                                                                                                                      ("tag_"+str(ibinsX*nbinsY + ibinsY)),
+                                                                                                                      bkg_name,
+                                                                                                                      ibinsX+1, ibinsY, 
+                                                                                                                      ibinsX  , ibinsY+1,
+                                                                                                                      ibinsX+1, ibinsY+1 
+                                                                                                                      ) )
+  
+  
+      for ibinsY in range(nbinsY) :
         for ibinsX in range(nbinsX) :
-           for ibinsY in range(nbinsY) :
-             for isig in range(num_sig):
-               card.write((' - ' ).ljust(columndef))
-             for ibkg in range(num_bkg):      
-               if "bkg_"+str(ibkg)  in nuisance['samples'] :
-                 temp_tag = ("tag_"+str(ibinsX*nbinsY + ibinsY))
-                 if temp_tag in nuisance['samples']["bkg_"+str(ibkg)] :
-                   card.write((' %s ' % nuisance['samples']["bkg_"+str(ibkg)][temp_tag] ).ljust(columndef))
-                 else:
-                   card.write((' - ' ).ljust(columndef))     
-               else :
+          if (ibinsY == (nbinsY-1) or ibinsX == (nbinsX-1) ) :
+            for bkg_name in bkg_names:
+              card.write('c_%.0f_%.0f rateParam   %s      %s   %.2f \n' % (ibinsX, ibinsY, 
+                                                                            ("tag_"+str(ibinsX*nbinsY + ibinsY)),
+                                                                            bkg_name,
+                                                                            1.0
+                                                                            ) )
+                                                                            #histo_data.GetBinContent(ibinsX+1, ibinsY+1)) )
+                                                                            #
+                                                                            # Either you put 1 here or in the "rate" line. Otherwise the default value will not be reasonable
+                                                                            #
+  
+  
+      card.write('\n\n\n')
+  
+      card.write('-'*100+'\n')
+  
+      #
+      # Write standard nuisances
+      #
+      for nuisanceName, nuisance in nuisances.items():
+        if "Signal" in nuisance['samples'] :   
+          card.write((nuisance['name'] + "  " + nuisance['type']).ljust(firstcolumndef))
+          for ibinsX in range(nbinsX) :
+             for ibinsY in range(nbinsY) :
+               for isig in range(num_sig):
+                 card.write((' %s ' % nuisance['samples']['Signal'] ).ljust(columndef))
+               for ibkg in range(num_bkg):
                  card.write((' - ' ).ljust(columndef))     
+          card.write('\n')
                
-        card.write('\n')
-       
-    card.write('-'*100+'\n')
-
-    #
-    # now write nuisances built from non-closure of the ABCD method: it uses MC!
-    #
-
-    for ibinsY in range(nbinsY) :
-      for ibinsX in range(nbinsX) :
-        if (ibinsY != (nbinsY-1) and ibinsX != (nbinsX-1) ) :
-          for bkg_name in bkg_names:
-            
-            # A/B = C/D --> A = B*C/D
-            #                                    +1            +1 ---> naming convention and ROOT
-            B = histo_bkg.GetBinContent(ibinsX+1 +1 , ibinsY   +1)
-            C = histo_bkg.GetBinContent(ibinsX   +1 , ibinsY+1 +1)
-            D = histo_bkg.GetBinContent(ibinsX+1 +1 , ibinsY+1 +1)
-            
-            #
-            # D has to be >0 !!! ... actually all of them MUST be
-            #
-            B_times_C_divided_D = B*C/D
-            
-            #                                  +1         +1 ---> naming convention and ROOT            
-            A = histo_bkg.GetBinContent(ibinsX +1, ibinsY +1)
-
-            print (" A, B, C, D = ", A, ", ", B, ", ", C, ", ", D)
-
-            #if A == 0: 
-              #A = 1
+      card.write('\n')
+      for nuisanceName, nuisance in nuisances.items():
+        if "Signal" not in nuisance['samples'] :   
+          card.write((nuisance['name'] + "  " + nuisance['type']).ljust(firstcolumndef))
+          for ibinsX in range(nbinsX) :
+             for ibinsY in range(nbinsY) :
+               for isig in range(num_sig):
+                 card.write((' - ' ).ljust(columndef))
+               for ibkg in range(num_bkg):      
+                 if "bkg_"+str(ibkg)  in nuisance['samples'] :
+                   temp_tag = ("tag_"+str(ibinsX*nbinsY + ibinsY))
+                   if temp_tag in nuisance['samples']["bkg_"+str(ibkg)] :
+                     card.write((' %s ' % nuisance['samples']["bkg_"+str(ibkg)][temp_tag] ).ljust(columndef))
+                   else:
+                     card.write((' - ' ).ljust(columndef))     
+                 else :
+                   card.write((' - ' ).ljust(columndef))     
+                 
+          card.write('\n')
+         
+      card.write('-'*100+'\n')
+  
+      #
+      # now write nuisances built from non-closure of the ABCD method: it uses MC!
+      #
+  
+      for ibinsY in range(nbinsY) :
+        for ibinsX in range(nbinsX) :
+          if (ibinsY != (nbinsY-1) and ibinsX != (nbinsX-1) ) :
+            for bkg_name in bkg_names:
               
-            #
-            # including "A" must be >0 !
-            #
-            non_closure = (A-B_times_C_divided_D) / A
-
-            #
-            # this threshold should be put proportional to the statistical uncertainty ... missing ...
-            #
-            if abs(non_closure) > 0.03 :
-              nuisance_name = "c_" + str(ibinsX) + "_" + str(ibinsY) + "_non_closure"
-              print ( " non_closure = ", non_closure )
-              # Only absolute value is meaningful
-              non_closure = abs(non_closure)
+              # A/B = C/D --> A = B*C/D
+              #                                    +1            +1 ---> naming convention and ROOT
+              B = histo_bkg.GetBinContent(ibinsX+1 +1 , ibinsY   +1)
+              C = histo_bkg.GetBinContent(ibinsX   +1 , ibinsY+1 +1)
+              D = histo_bkg.GetBinContent(ibinsX+1 +1 , ibinsY+1 +1)
+              
               #
-              card.write((nuisance_name + "  " + "lnN").ljust(firstcolumndef))
+              # D has to be >0 !!! ... actually all of them MUST be
+              #
+              B_times_C_divided_D = B*C/D
+              
+              #                                  +1         +1 ---> naming convention and ROOT            
+              A = histo_bkg.GetBinContent(ibinsX +1, ibinsY +1)
   
-              for ibinsX_to_write in range(nbinsX) :
-                for ibinsY_to_write in range(nbinsY) :
+              print (" A, B, C, D = ", A, ", ", B, ", ", C, ", ", D)
   
-                  for isig in range(num_sig):
-                    card.write((' - ' ).ljust(columndef))
-                  for ibkg in range(num_bkg):  
-                    if ibinsX_to_write == ibinsX and ibinsY_to_write == ibinsY :
-                      card.write((' %s ' % str(round(1+non_closure, 2)) ).ljust(columndef))
-                    else:
-                      card.write((' - ' ).ljust(columndef))     
-            
-            card.write('\n')
+              #if A == 0: 
+                #A = 1
+                
+              #
+              # including "A" must be >0 !
+              #
+              non_closure = (A-B_times_C_divided_D) / A
+  
+              #
+              # this threshold should be put proportional to the statistical uncertainty ... missing ...
+              #
+              if abs(non_closure) > 0.03 :
+                nuisance_name = "c_" + str(ibinsX) + "_" + str(ibinsY) + "_non_closure"
+                print ( " non_closure = ", non_closure )
+                # Only absolute value is meaningful
+                non_closure = abs(non_closure)
+                #
+                card.write((nuisance_name + "  " + "lnN").ljust(firstcolumndef))
+    
+                for ibinsX_to_write in range(nbinsX) :
+                  for ibinsY_to_write in range(nbinsY) :
+    
+                    for isig in range(num_sig):
+                      card.write((' - ' ).ljust(columndef))
+                    for ibkg in range(num_bkg):  
+                      if ibinsX_to_write == ibinsX and ibinsY_to_write == ibinsY :
+                        card.write((' %s ' % str(round(1+non_closure, 2)) ).ljust(columndef))
+                      else:
+                        card.write((' - ' ).ljust(columndef))     
+              
+              card.write('\n')
 
     card.write('\n\n\n')
 
