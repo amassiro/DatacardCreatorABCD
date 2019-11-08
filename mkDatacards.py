@@ -214,6 +214,18 @@ if __name__ == '__main__':
     card.write(('rate      ').ljust(firstcolumndef))
     for ibinsX in range(nbinsX) :
       for ibinsY in range(nbinsY) :
+        
+        #
+        # if it is in the "edge" of the matrix, the
+        # sample is using data
+        # otherwise it is constrained by the other points
+        #
+        
+        data_constrained_bin = False # the "edge" should be false
+        if (ibinsY != (nbinsY-1) and ibinsX != (nbinsX-1) ) :
+          data_constrained_bin = True
+        #
+        
         for isig in range(num_sig):
           #card.write(((' %.3f ' % histo_sig.GetBinContent(ibinsX+1, ibinsY+1))).ljust(columndef))
           card.write(((' %.3f ' % list(histos_sig.values())[isig].GetBinContent(ibinsX+1, ibinsY+1))).ljust(columndef))
@@ -224,7 +236,12 @@ if __name__ == '__main__':
           #
           # -> this actually should never happen, since using histo_data instead of histo_bkg is already set at the beginning
           #
-          card.write(((' %.3f ' % histo_bkg.GetBinContent(ibinsX+1, ibinsY+1))).ljust(columndef))   
+          if not data_constrained_bin :
+            card.write(((' %.3f ' % histo_bkg.GetBinContent(ibinsX+1, ibinsY+1))).ljust(columndef))   
+          else :
+            card.write(((' %.3f ' % 1.)).ljust(columndef))   
+            
+          #card.write(((' %.3f ' % histo_bkg.GetBinContent(ibinsX+1, ibinsY+1))).ljust(columndef))   
           #
           #print ( " Bkg[", ibinsX, "][", ibinsY, "] = ", histo_bkg.GetBinContent(ibinsX+1, ibinsY+1) )
           #
@@ -291,6 +308,13 @@ if __name__ == '__main__':
     #
     # Only if at least 4 bins!
     #
+
+#   
+#   Since I put in the "rate" row the expected yield, and here I put "1" for the default parameters of the rateparam of normalization
+#   the expected yield of "A" should be scaled by beta*gamma/delta * B*C/D
+#   Then in order to obtain this I need to divide by "A" rate, otherwise it is scaled twice by "A-yield"
+#   Another way to obtain this is by putting "1" to the expected yield in "A" ---> this is easier, I will do this!
+#   
     
     if nbinsY*nbinsX>=4 :
 
@@ -307,6 +331,9 @@ if __name__ == '__main__':
                                                                                                                       ibinsX  , ibinsY+1,
                                                                                                                       ibinsX+1, ibinsY+1 
                                                                                                                       ) )
+
+
+
   
   
       for ibinsY in range(nbinsY) :
