@@ -43,6 +43,11 @@ How to run:
                            --bkgHistoName   background  \
                            --nuisancesFile   test/nuisances.py
 
+    python mkDatacards.py  --inputHistoFile abcd_plots_3x3_3-layers_LH_noTag_650_10.root   \
+                           --dataHistoName  background   \
+                           --sigHistoNameTemplate  Wino_m800_ct20   \
+                           --bkgHistoName   background  \
+                           --nuisancesFile   test/nuisances.py
                            
     python mkDatacards.py  --inputHistoFile abcd_plots_3x3_4layers.root   \
                            --dataHistoName  data_histo   \
