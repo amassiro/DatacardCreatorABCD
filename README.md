@@ -54,7 +54,17 @@ How to run:
                            --sigHistoNameTemplate  Wino   \
                            --bkgHistoName   W+jets_background  \
                            --nuisancesFile   test/nuisances.py
-                           
+      
+    
+    python mkDatacards.py  --inputHistoFile abcd_plots_Wmunu.root   \
+                           --dataHistoName  data   \
+                           --sigHistoNameTemplate  XXX   \
+                           --bkgHistoName   background  \
+                           --nuisancesFile   test/nuisances.py
+    
+    
+    
+      
                            
 Python3
 
@@ -109,6 +119,21 @@ Test the datacard:
       --setParameters to_be_frozen=0  \
       --freezeParameters to_be_frozen \
       --redefineSignalPOIs r
+      
+      
+Closure test:
+
+    text2workspace.py -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel  --PO verbose \
+         --PO 'map=.*/*Wino*:to_be_frozen[1,0,10]' \
+         --PO 'map=.*/*Wino_m800_ct20:r[1,0,10]' \
+         datacard_mytest.txt -o datacard_mytest.root
+
+    combine -d datacard_mytest.root   -M AsymptoticLimits \
+      --setParameters to_be_frozen=0  \
+      --freezeParameters to_be_frozen \
+      --redefineSignalPOIs r
+
+
       
       
       
