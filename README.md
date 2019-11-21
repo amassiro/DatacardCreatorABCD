@@ -120,11 +120,12 @@ Closure test:
 
     python mkDatacards.py  --inputHistoFile abcd_plots_Wmunu.root   \
                            --dataHistoName  data   \
-                           --sigHistoNameTemplate  background   \
+                           --sigHistoNameTemplate  XXX   \
                            --bkgHistoName   background  \
                            --nuisancesFile   test/nuisances.py
 
-                           
+    In text2workspace remember to set "text2workspace.py --X-allow-no-signal"
+    
     Where: /afs/cern.ch/work/a/amassiro/Latinos/Framework/Combine/CMSSW_10_2_13/src/
 
     
@@ -132,33 +133,17 @@ Closure test:
          --PO 'map=.*/*background*:to_be_frozen[1,0,10]' \
          datacard_mytest.txt -o datacard_mytest.root
 
-         
-    combine -d datacard_mytest.root   -M FitDiagnostics \
-      --setParameters to_be_frozen=0 \
-      --freezeParameters to_be_frozen \
-       --redefineSignalPOIs c_1_0,c_1_1,c_0_2,c_1_2 \
-     --forceRecreateNLL
-
-     combine -d datacard_mytest.root   -M MultiDimFit \
-      --setParameters to_be_frozen=0 \
-      --freezeParameters to_be_frozen \
-       --redefineSignalPOIs c_1_0,c_1_1,c_0_2,c_1_2 \
-     --forceRecreateNLL
-
+    
      combine -d datacard_mytest.root   -M MultiDimFit \
       --setParameters to_be_frozen=0 \
       --freezeParameters to_be_frozen \
        --redefineSignalPOIs c_1_0,c_1_1,c_0_2,c_1_2 \
      --forceRecreateNLL  \
      --algo singles 
-          
-
-     
-     
-     --algo=cross 
-     
+    
     
     combine -M GoodnessOfFit datacard_mytest.root --algo=saturated \
+      --redefineSignalPOIs c_1_0,c_1_1,c_0_2,c_1_2 \
       --setParameters to_be_frozen=0 \
       --freezeParameters to_be_frozen
     
@@ -168,8 +153,22 @@ Closure test:
       --freezeParameters r \
       -t 500 --toysFrequentist
        
+       
+       
+     text2workspace.py -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel  --PO verbose \
+         datacard_example.txt -o datacard_example.root
+     
     
     
+    text2workspace.py --X-allow-no-signal  --PO verbose \
+         datacard_example.txt -o datacard_example.root
+     
+    combine -M GoodnessOfFit datacard_example.root --algo=saturated
+       
+    combine -M GoodnessOfFit datacard_example.root --algo=saturated \
+      -t 500 --toysFrequentist
+      
+      
 
        combine -M GoodnessOfFit -d combined_card.root --algo=saturated -n _result_bonly_CRonly_toy --setParametersForFit mask_ch1=1 --setParametersForEval mask_ch1=0 --freezeParameters r --setParameters r=0,mask_ch1=1
        
