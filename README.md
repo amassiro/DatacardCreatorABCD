@@ -120,21 +120,64 @@ Closure test:
 
     python mkDatacards.py  --inputHistoFile abcd_plots_Wmunu.root   \
                            --dataHistoName  data   \
-                           --sigHistoNameTemplate  XXX   \
+                           --sigHistoNameTemplate  background   \
                            --bkgHistoName   background  \
                            --nuisancesFile   test/nuisances.py
 
+                           
+    Where: /afs/cern.ch/work/a/amassiro/Latinos/Framework/Combine/CMSSW_10_2_13/src/
+
+    
     text2workspace.py -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel  --PO verbose \
-         --PO 'map=.*/*Wino*:to_be_frozen[1,0,10]' \
-         --PO 'map=.*/*Wino_m800_ct20:r[1,0,10]' \
+         --PO 'map=.*/*background*:to_be_frozen[1,0,10]' \
          datacard_mytest.txt -o datacard_mytest.root
 
-    combine -d datacard_mytest.root   -M AsymptoticLimits \
-      --setParameters to_be_frozen=0  \
+         
+    combine -d datacard_mytest.root   -M FitDiagnostics \
+      --setParameters to_be_frozen=0 \
       --freezeParameters to_be_frozen \
-      --redefineSignalPOIs r
+       --redefineSignalPOIs c_1_0,c_1_1,c_0_2,c_1_2 \
+     --forceRecreateNLL
 
+     combine -d datacard_mytest.root   -M MultiDimFit \
+      --setParameters to_be_frozen=0 \
+      --freezeParameters to_be_frozen \
+       --redefineSignalPOIs c_1_0,c_1_1,c_0_2,c_1_2 \
+     --forceRecreateNLL
 
-      
+     combine -d datacard_mytest.root   -M MultiDimFit \
+      --setParameters to_be_frozen=0 \
+      --freezeParameters to_be_frozen \
+       --redefineSignalPOIs c_1_0,c_1_1,c_0_2,c_1_2 \
+     --forceRecreateNLL  \
+     --algo singles 
+          
+
+     
+     
+     --algo=cross 
+     
+    
+    combine -M GoodnessOfFit datacard_mytest.root --algo=saturated \
+      --setParameters to_be_frozen=0 \
+      --freezeParameters to_be_frozen
+    
+    
+    combine -M GoodnessOfFit datacard_mytest.root --algo=saturated \
+      --setParameters r=0 \
+      --freezeParameters r \
+      -t 500 --toysFrequentist
+       
+    
+    
+
+       combine -M GoodnessOfFit -d combined_card.root --algo=saturated -n _result_bonly_CRonly_toy --setParametersForFit mask_ch1=1 --setParametersForEval mask_ch1=0 --freezeParameters r --setParameters r=0,mask_ch1=1
+       
+    combine -M GoodnessOfFit datacard.txt --algo=saturated -t 10 -s 42
+
+    
+    https://twiki.cern.ch/twiki/bin/viewauth/CMS/SWGuideHiggsAnalysisCombinedLimit#Goodness_of_fit_tests
+    
+    
       
       
