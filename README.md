@@ -128,23 +128,23 @@ Closure test:
     
     Where: /afs/cern.ch/work/a/amassiro/Latinos/Framework/Combine/CMSSW_10_2_13/src/
 
+
+    cp datacard_mytest.txt datacard_mytest_backup.txt
     
+    combineCards.py -S datacard_mytest_backup.txt > datacard_mytest.txt
+
     text2workspace.py  --PO verbose    --X-allow-no-signal   datacard_mytest.txt -o datacard_mytest.root
 
-    
     combine -M GoodnessOfFit datacard_mytest.root --algo=saturated
 
-    combine -M GoodnessOfFit datacard_mytest.root --algo=saturated \
-      --redefineSignalPOIs c_1_0,c_1_1,c_0_2,c_1_2 
-      
+    combine -M GoodnessOfFit datacard_mytest.root --algo=saturated  -t 500 --toysFrequentist
+       
+       
+     
+     
+    cp datacard_example_modified_complex.txt datacard_example_modified_complex_backup.txt
     
-    combine -M GoodnessOfFit datacard_mytest.root --algo=saturated \
-      --setParameters r=0 \
-      --freezeParameters r \
-      -t 500 --toysFrequentist
-       
-       
-       
+    combineCards.py -S datacard_example_modified_complex_backup.txt > datacard_example_modified_complex.txt
     
     text2workspace.py --X-allow-no-signal  --PO verbose \
          datacard_example.txt -o datacard_example.root
@@ -172,7 +172,9 @@ Closure test:
     
     
     
+    cp datacard_example_modified_complex.txt datacard_example_modified_complex_backup.txt
     
+    combineCards.py -S datacard_example_modified_complex_backup.txt > datacard_example_modified_complex.txt
     
     text2workspace.py  --PO verbose         --X-allow-no-signal           datacard_example_modified_complex.txt   -o datacard_example_modified_complex.root
     
