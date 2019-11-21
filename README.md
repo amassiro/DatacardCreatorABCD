@@ -129,9 +129,7 @@ Closure test:
     Where: /afs/cern.ch/work/a/amassiro/Latinos/Framework/Combine/CMSSW_10_2_13/src/
 
     
-    text2workspace.py  --PO verbose \
-        --X-allow-no-signal  \
-         datacard_mytest.txt -o datacard_mytest.root
+    text2workspace.py  --PO verbose    --X-allow-no-signal   datacard_mytest.txt -o datacard_mytest.root
 
     
     combine -M GoodnessOfFit datacard_mytest.root --algo=saturated
@@ -171,6 +169,16 @@ Closure test:
     combine -M GoodnessOfFit datacard_example_modified.root  --algo=saturated   -t 10   --toysNoSystematics
     
     -> it works
+    
+    
+    
+    
+    
+    text2workspace.py  --PO verbose         --X-allow-no-signal           datacard_example_modified_complex.txt   -o datacard_example_modified_complex.root
+    
+    combine -M GoodnessOfFit datacard_example_modified_complex.root  --algo=saturated
+    
+    combine -M GoodnessOfFit datacard_example_modified_complex.root  --algo=saturated   -t 10   --toysNoSystematics
     
     
     
