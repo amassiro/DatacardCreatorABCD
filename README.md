@@ -56,13 +56,6 @@ How to run:
                            --nuisancesFile   test/nuisances.py
       
     
-    python mkDatacards.py  --inputHistoFile abcd_plots_Wmunu.root   \
-                           --dataHistoName  data   \
-                           --sigHistoNameTemplate  XXX   \
-                           --bkgHistoName   background  \
-                           --nuisancesFile   test/nuisances.py
-    
-    
     
       
                            
@@ -122,6 +115,14 @@ Test the datacard:
       
       
 Closure test:
+
+    scp amassiro@lxplus.cern.ch:/afs/cern.ch/work/j/jniedzie/public/abcdPlots/abcd_plots_Wmunu.root .
+
+    python mkDatacards.py  --inputHistoFile abcd_plots_Wmunu.root   \
+                           --dataHistoName  data   \
+                           --sigHistoNameTemplate  XXX   \
+                           --bkgHistoName   background  \
+                           --nuisancesFile   test/nuisances.py
 
     text2workspace.py -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel  --PO verbose \
          --PO 'map=.*/*Wino*:to_be_frozen[1,0,10]' \
