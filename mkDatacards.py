@@ -352,7 +352,7 @@ if __name__ == '__main__':
       # Write standard nuisances
       #
       for nuisanceName, nuisance in nuisances.items():
-        if "Signal" in nuisance['samples'] :   
+        if "Signal" in nuisance['samples'] and nuisance['type'] != 'shape' :   
           card.write((nuisance['name'] + "  " + nuisance['type']).ljust(firstcolumndef))
           for ibinsX in range(nbinsX) :
              for ibinsY in range(nbinsY) :
@@ -364,7 +364,7 @@ if __name__ == '__main__':
                
       card.write('\n')
       for nuisanceName, nuisance in nuisances.items():
-        if "Signal" not in nuisance['samples'] :   
+        if "Signal" not in nuisance['samples'] and nuisance['type'] != 'shape' :   
           card.write((nuisance['name'] + "  " + nuisance['type']).ljust(firstcolumndef))
           for ibinsX in range(nbinsX) :
              for ibinsY in range(nbinsY) :
@@ -381,7 +381,55 @@ if __name__ == '__main__':
                    card.write((' - ' ).ljust(columndef))     
                  
           card.write('\n')
-         
+        
+        
+        
+      #
+      # Write nuisances from alternative shapes -> coded into lnN (only for signal)
+      #
+        
+      for nuisanceName, nuisance in nuisances.items():
+        if nuisance['type'] == 'shape' :
+          #
+          # Calculate value for up/down variation
+          #
+          fileInNuisanceUp = ROOT.TFile.Open( nuisance['rootFileUp'] )
+
+          if ( opt.sigHistoName != None ) :       
+            histo_sig_nuisance_up  = getHisto(fileInNuisanceUp, opt.sigHistoName )
+            histos_sig_nuisance_up[histo_sig.GetName()] = histo_sig_nuisance_up
+          else :
+            histos_sig_nuisance_up  = getHistos(fileInNuisanceUp, opt.sigHistoNameTemplate )
+
+          fileInNuisanceDown = ROOT.TFile.Open( nuisance['rootFileDown'] )
+
+          if ( opt.sigHistoName != None ) :       
+            histo_sig_nuisance_down  = getHisto(fileInNuisanceDown, opt.sigHistoName )
+            histos_sig_nuisance_down[histo_sig.GetName()] = histo_sig_nuisance_down
+          else :
+            histos_sig_nuisance_down  = getHistos(fileInNuisanceDown, opt.sigHistoNameTemplate )
+
+          card.write((nuisance['name'] + "  " + 'lnN').ljust(firstcolumndef))
+          for ibinsX in range(nbinsX) :
+             for ibinsY in range(nbinsY) :
+               for isig in range(num_sig):
+                  value_nominal = list(histos_sig.values())[isig]              .GetBinContent(ibinsX+1, ibinsY+1)
+                  value_up      = list(histos_sig_nuisance_up.values())[isig]  .GetBinContent(ibinsX+1, ibinsY+1)
+                  value_down    = list(histos_sig_nuisance_down.values())[isig].GetBinContent(ibinsX+1, ibinsY+1)
+                  
+                  if value_nominal != 0 :
+                    #
+                    #  e.g.:  1.10/0.95 --> 10% up and 5% down
+                    #
+                    card.write((' %s ' % ( str(value_up/value_nominal) + '/' + str(value_down/value_nominal)  )  ).ljust(columndef))
+                  else :
+                    card.write((' - ' ).ljust(columndef))     
+                    
+               for ibkg in range(num_bkg):
+                 card.write((' - ' ).ljust(columndef))     
+          card.write('\n')
+               
+        
       card.write('-'*100+'\n')
   
       #

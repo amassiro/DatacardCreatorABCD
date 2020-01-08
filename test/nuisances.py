@@ -19,3 +19,17 @@ nuisances['lumi']  = {
                              #}
                    #}
                #}
+
+
+
+#
+# To be applied to all signal saamples
+#
+
+nuisances['jetpt']  = {
+               'name'  : 'jet_pt', 
+               'type'  : 'shape',
+               'rootFileUp'   : 'abcd_plots_3x3_4layers_jet_pt_up.root',
+               'rootFileDown' : 'abcd_plots_3x3_4layers_jet_pt_down.root',
+               'samples'  : { }
+               }

@@ -54,10 +54,12 @@ How to run:
                            --sigHistoNameTemplate  Wino   \
                            --bkgHistoName   W+jets_background  \
                            --nuisancesFile   test/nuisances.py
-      
-    
-    
-      
+
+    python mkDatacards.py  --inputHistoFile abcd_plots_3x3_4layers.root   \
+                           --dataHistoName  W+jets_background   \
+                           --sigHistoNameTemplate  Wino   \
+                           --bkgHistoName   W+jets_background  \
+                           --nuisancesFile   test/nuisances.py
                            
 Python3
 
