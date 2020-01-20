@@ -29,7 +29,7 @@ nuisances['lumi']  = {
 nuisances['jetpt']  = {
                'name'  : 'jet_pt', 
                'type'  : 'shape',
-               'rootFileUp'   : 'abcd_plots_3x3_4layers_jet_pt_up.root',
-               'rootFileDown' : 'abcd_plots_3x3_4layers_jet_pt_down.root',
+               #'rootFileUp'   : 'abcd_plots_3x3_4layers_jet_pt_up.root',     # if not defined, 'name' + '_up.root' will be used
+               #'rootFileDown' : 'abcd_plots_3x3_4layers_jet_pt_down.root',   # if not defined, 'name' + '_down.root' will be used
                'samples'  : { }
                }

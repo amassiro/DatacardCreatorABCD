@@ -393,6 +393,21 @@ if __name__ == '__main__':
           #
           # Calculate value for up/down variation
           #
+          
+          if 'rootFileUp' not in nuisance :
+            #                                  ".root" -> 5 characters
+            inputHistoFile_withoutRoot = opt.inputHistoFile[:-5]
+            nuisance['rootFileUp'] = inputHistoFile_withoutRoot + "_" + nuisance['name'] + "_up.root"
+            
+          if 'rootFileDown' not in nuisance :
+            #                                  ".root" -> 5 characters
+            inputHistoFile_withoutRoot = opt.inputHistoFile[:-5]
+            nuisance['rootFileDown'] = inputHistoFile_withoutRoot + "_" + nuisance['name'] + "_down.root"
+          
+          print " nuisance['rootFileDown'] = " , nuisance['rootFileDown']
+          print " nuisance['rootFileUp']   = " , nuisance['rootFileUp']
+          
+          
           fileInNuisanceUp = ROOT.TFile.Open( nuisance['rootFileUp'] )
 
           if ( opt.sigHistoName != None ) :       
