@@ -9,18 +9,32 @@ void setupHisto(TH1F* histo, int icolor) {
   
   Color_t* color = new Color_t [200];
   color[0] = kRed ;
-  color[1] = kAzure + 10 ;
-  color[2] = kYellow + 2 ;
-  color[3] = kGreen ;
-  color[4] = kGreen + 4 ;
-  color[5] = kBlue ;
-  color[6] = kCyan ;
-  color[7] = kPink + 1 ;
-  color[8] = kBlack ;
+  color[1] = kAzure + 7 ;
+  color[2] = kGreen + 2 ;
+  color[3] = kRed +1 ;
+  color[4] = kAzure + 8 ;
+  color[5] = kGreen + 3;
+  color[6] = kRed +2 ;
+  color[7] = kAzure + 9 ;
+  color[8] = kGreen + 4 ;
   color[9] = kYellow + 4 ;
   for (int i=0; i<30; i++) {
     color[i+10] = kBlue + i;
   }
+  
+//   color[0] = kRed ;
+//   color[1] = kAzure + 10 ;
+//   color[2] = kYellow + 2 ;
+//   color[3] = kGreen ;
+//   color[4] = kGreen + 4 ;
+//   color[5] = kBlue ;
+//   color[6] = kCyan ;
+//   color[7] = kPink + 1 ;
+//   color[8] = kBlack ;
+//   color[9] = kYellow + 4 ;
+//   for (int i=0; i<30; i++) {
+//     color[i+10] = kBlue + i;
+//   }
   
   histo->SetLineColor(color[icolor]);
   histo->SetMarkerColor(color[icolor]);
@@ -67,21 +81,21 @@ void readPlot(std::string datacard_name = "datacard_3x3_4-layers_Chargino_300_1.
       
       std::cout << " what = " << what << std::endl;
       
-      if (what == "process") {
+      if (what == "process" && samples.size()==0) {
         while (line) {
           line >> value_string;
           samples.push_back(value_string);
         }
       }
       
-      if (what == "bin") {
+      if (what == "bin" && tags.size()==0) {
         while (line) {
           line >> value_string;
           tags.push_back(value_string);
         }
       }
       
-      if (what == "rate") {
+      if (what == "rate" && values.size()==0) {
         while (line) {
           line >> value_float;
           values.push_back(value_float);
@@ -150,14 +164,14 @@ void readPlot(std::string datacard_name = "datacard_3x3_4-layers_Chargino_300_1.
   
   TLegend* legend_useful = new TLegend(0.81,0.25,0.99,0.90);
   for (int iSample = 0; iSample<samples_unique.size(); iSample++) {
-    legend_useful->AddEntry(histos[iSample], TString::Format("%s", samples_unique.at(iSample).c_str()) ,"f");
+    legend_useful->AddEntry(histos[iSample], TString::Format("%s", samples_unique.at(iSample).c_str()) ,"fp");
   }
   
   
   
   
   
-  TCanvas* cc = new TCanvas("cc", datacard_name.c_str(), 800, 600);
+  TCanvas* cc = new TCanvas("cc", datacard_name.c_str(), 1200, 600);
   cc->SetRightMargin(0.2);
   for (int iSample = 0; iSample<samples_unique.size(); iSample++) {
     if (iSample==0) histos[iSample]->Draw();
@@ -178,16 +192,17 @@ void readPlot(std::string datacard_name = "datacard_3x3_4-layers_Chargino_300_1.
   
   
   
-  TCanvas* cc_normalized = new TCanvas("cc_normalized", "normalized", 800, 600);
+  TCanvas* cc_normalized = new TCanvas("cc_normalized", "normalized", 1200, 600);
   cc_normalized->SetRightMargin(0.2);
   for (int iSample = 0; iSample<samples_unique.size(); iSample++) {
     if (iSample==0) histos_normalized[iSample]->Draw("P");
     else            histos_normalized[iSample]->Draw("P same");
   }
+  histos_normalized[0]->GetYaxis()->SetRangeUser(0.0,0.7);
   legend_useful->Draw();
   
   for (int iTag = 0; iTag<tags_unique.size(); iTag++) {
-    TLine ll((iTag+1)*samples_unique.size(), 0, (iTag+1)*samples_unique.size(), 0.5);
+    TLine ll((iTag+1)*samples_unique.size(), 0, (iTag+1)*samples_unique.size(), 0.7);
     ll.SetLineColor(kBlack);
     ll.SetLineWidth(3);
     ll.DrawClone();
