@@ -8,3 +8,7 @@ Scan and test datacards
     r99t readPlot.cc\(\"datacard_5-6-layers.txt\"\)
     
     
+Inputs:
+
+    /afs/cern.ch/work/j/jniedzie/public/limitsDebugging/
+    
